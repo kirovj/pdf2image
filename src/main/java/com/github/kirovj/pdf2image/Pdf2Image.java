@@ -7,6 +7,8 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -14,6 +16,8 @@ import java.io.File;
 import java.io.IOException;
 
 public class Pdf2Image {
+
+    private static final Logger log = LoggerFactory.getLogger(Pdf2Image.class);
 
 //    static void pdf2imageWithBox3(String file) {
 //        try (PDDocument document = Loader.loadPDF(new File("example/" + file + ".pdf"))) {
@@ -39,7 +43,9 @@ public class Pdf2Image {
             int numberOfPages = document.getNumberOfPages();
             PDFRenderer renderer = new PDFRenderer(document);
             for (int i = 0; i < numberOfPages; i++) {
-                System.out.println("render " + i);
+                log.debug("render {}", i);
+                PDPage page = document.getPage(i);
+                page.setCropBox(page.getMediaBox());
                 BufferedImage bufferedImage = renderer.renderImage(i, 2, ImageType.RGB);
                 ImageIO.write(bufferedImage, "png", new File("example/" + file + "-" + i + ".png"));
             }
@@ -87,7 +93,7 @@ public class Pdf2Image {
 
     public static void main(String[] args) throws IOException {
 //        pdf2imageWithBox3("err1");
-        pdf2image("err0");
+        pdf2image("err1");
 //        image2pdf();
     }
 }
