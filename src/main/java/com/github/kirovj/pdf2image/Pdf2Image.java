@@ -34,17 +34,31 @@ public class Pdf2Image {
 //        }
 //    }
 
-    static void pdf2image(String file) {
-        try (PDDocument document = PDDocument.load(new File("example/" + file + ".pdf"))) {
+    private static void render(String file, PDFRenderer renderer, int page, float scale, float dpi) throws IOException {
+        file = file.replaceAll(".pdf", "").replaceAll(".PDF", "");
+        var name = file + "-" + page;
+        BufferedImage bufferedImage;
+        bufferedImage = renderer.renderImage(page - 1, scale, ImageType.RGB);
+        ImageIO.write(bufferedImage, "png", new File(name + ".png"));
+        if (dpi > 0) {
+            bufferedImage = renderer.renderImageWithDPI(page - 1, dpi, ImageType.RGB);
+            ImageIO.write(bufferedImage, "png", new File(name + "-dpi" + (int) dpi + ".png"));
+        }
+    }
+
+    static void pdf2image(String file, int page, float scale, float dpi) throws IOException {
+        scale = scale > 0 ? scale : 2;
+        dpi = dpi > 0 ? dpi : 300;
+        try (PDDocument document = PDDocument.load(new File(file))) {
             int numberOfPages = document.getNumberOfPages();
             PDFRenderer renderer = new PDFRenderer(document);
-            for (int i = 0; i < numberOfPages; i++) {
-                System.out.println("render " + i);
-                BufferedImage bufferedImage = renderer.renderImage(i, 2, ImageType.RGB);
-                ImageIO.write(bufferedImage, "png", new File("example/" + file + "-" + i + ".png"));
+            if (page > 0) {
+                render(file, renderer, page, scale, dpi);
+            } else {
+                for (int i = 1; i <= numberOfPages; i++) {
+                    render(file, renderer, page, scale, dpi);
+                }
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -86,8 +100,9 @@ public class Pdf2Image {
     }
 
     public static void main(String[] args) throws IOException {
-//        pdf2imageWithBox3("err1");
-        pdf2image("err0");
-//        image2pdf();
+        for (String arg : args) {
+            System.out.println(arg);
+        }
+//        pdf2image("err0816_hk_175", 183);
     }
 }
