@@ -7,15 +7,17 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.rendering.ImageType;
 import org.apache.pdfbox.rendering.PDFRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Iterator;
 
 public class Pdf2Image {
+
+    private static final Logger log = LoggerFactory.getLogger(Pdf2Image.class);
 
 //    static void pdf2imageWithBox3(String file) {
 //        try (PDDocument document = Loader.loadPDF(new File("example/" + file + ".pdf"))) {
@@ -37,6 +39,7 @@ public class Pdf2Image {
 //    }
 
     private static void render(String file, PDFRenderer renderer, PDPage pdfPage, int page, float scale, float dpi) throws IOException {
+        log.info("render {} page {}, scale: {}, dpi: {}", file, page, scale, dpi);
         pdfPage.setCropBox(pdfPage.getMediaBox());
         file = file.replaceAll(".pdf", "").replaceAll(".PDF", "");
         var name = file + "-" + page;
