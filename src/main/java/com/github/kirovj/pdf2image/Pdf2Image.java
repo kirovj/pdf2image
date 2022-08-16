@@ -12,6 +12,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Iterator;
 
 public class Pdf2Image {
 
@@ -49,7 +51,6 @@ public class Pdf2Image {
 
     static void pdf2image(String file, int page, float scale, float dpi) throws IOException {
         scale = scale > 0 ? scale : 2;
-        dpi = dpi > 0 ? dpi : 300;
         try (PDDocument document = PDDocument.load(new File(file))) {
             int numberOfPages = document.getNumberOfPages();
             PDFRenderer renderer = new PDFRenderer(document);
@@ -101,9 +102,16 @@ public class Pdf2Image {
     }
 
     public static void main(String[] args) throws IOException {
-        for (String arg : args) {
-            System.out.println(arg);
+        var file = args[0];
+        int page = 0;
+        float scale = 0, dpi = 0;
+        for (int i = 1; i < args.length; i += 2) {
+            switch (args[i]) {
+                case "-p" -> page = Integer.parseInt(args[i + 1]);
+                case "-s" -> scale = Float.parseFloat(args[i + 1]);
+                case "-d" -> dpi = Float.parseFloat(args[i + 1]);
+            }
         }
-//        pdf2image("err0816_hk_175", 183);
+        pdf2image(file, page, scale, dpi);
     }
 }
