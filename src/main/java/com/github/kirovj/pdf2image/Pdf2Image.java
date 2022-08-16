@@ -34,7 +34,8 @@ public class Pdf2Image {
 //        }
 //    }
 
-    private static void render(String file, PDFRenderer renderer, int page, float scale, float dpi) throws IOException {
+    private static void render(String file, PDFRenderer renderer, PDPage pdfPage, int page, float scale, float dpi) throws IOException {
+        pdfPage.setCropBox(pdfPage.getMediaBox());
         file = file.replaceAll(".pdf", "").replaceAll(".PDF", "");
         var name = file + "-" + page;
         BufferedImage bufferedImage;
@@ -53,10 +54,10 @@ public class Pdf2Image {
             int numberOfPages = document.getNumberOfPages();
             PDFRenderer renderer = new PDFRenderer(document);
             if (page > 0) {
-                render(file, renderer, page, scale, dpi);
+                render(file, renderer, document.getPage(page), page, scale, dpi);
             } else {
                 for (int i = 1; i <= numberOfPages; i++) {
-                    render(file, renderer, page, scale, dpi);
+                    render(file, renderer, document.getPage(i), page, scale, dpi);
                 }
             }
         }
