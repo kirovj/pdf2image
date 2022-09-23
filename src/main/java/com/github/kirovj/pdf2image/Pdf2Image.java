@@ -1,5 +1,6 @@
 package com.github.kirovj.pdf2image;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -50,7 +51,7 @@ public class Pdf2Image {
 
     static void pdf2image(String file, int page, float scale, float dpi) throws IOException {
         scale = scale > 0 ? scale : 2;
-        try (PDDocument document = PDDocument.load(new File(file))) {
+        try (PDDocument document = Loader.loadPDF(new File(file))) {
             int numberOfPages = document.getNumberOfPages();
             PDFRenderer renderer = new PDFRenderer(document);
             if (page > 0) {
@@ -112,5 +113,6 @@ public class Pdf2Image {
             }
         }
         pdf2image(file, page, scale, dpi);
+//        pdf2image("./example/err1-4.pdf", 5, 2, 300);
     }
 }
